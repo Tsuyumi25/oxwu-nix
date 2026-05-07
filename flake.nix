@@ -9,7 +9,7 @@
     in {
       packages = nixpkgs.lib.genAttrs systems (system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
           oxwu = pkgs.callPackage ./package.nix {};
         in {
           inherit oxwu;
