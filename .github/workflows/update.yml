@@ -1,0 +1,32 @@
+name: Update oxwu
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # 每週一 02:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v14
+
+      - name: Run update script
+        run: bash update.sh
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          VERSION=$(grep 'version = ' package.nix | head -1 | sed 's/.*"\(.*\)".*/\1/')
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.nix etag.*
+          git commit -m "chore: update oxwu to ${VERSION}"
+          git push
