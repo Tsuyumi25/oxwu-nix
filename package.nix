@@ -1,20 +1,20 @@
 { lib, appimageTools, fetchurl, stdenv }:
 
 let
-  version = "4.1.3";
+  version = "4.2.0";
   pname = "oxwu";
   srcs = {
     x86_64-linux = fetchurl {
       url = "https://eew.earthquake.tw/releases/linux/x64/oxwu-linux-x86_64.AppImage";
-      hash = "sha256-MtcWrQpro+IBYWMxV6gdI6YsRkygtNKR0h7h97WHO8M="; # x86_64
+      hash = "sha256-cjUcitOd0SOxfeQHpRMXeizJbJj2m4uGprxIOlIE5Eo="; # x86_64
     };
     aarch64-linux = fetchurl {
       url = "https://eew.earthquake.tw/releases/linux/arm64/oxwu-linux-arm64.AppImage";
-      hash = "sha256-MPJavJvhWu8D3vokGwMeaXQnxeXn2cMx6uvTGqAwwX0="; # aarch64
+      hash = "sha256-sDlZgG2dXeHEfIB5TubWKx8PfutnKXiJot6r10ZIZtk="; # aarch64
     };
     armv7l-linux = fetchurl {
       url = "https://eew.earthquake.tw/releases/linux/armv7l/oxwu-linux-armv7l.AppImage";
-      hash = "sha256-5MQ2S+rt90mwVNARTEc8i72Uze6jfmxOEpqNfbswiNU="; # armv7l
+      hash = "sha256-xdQf8rMPSkHY7Czx68egynRQhUn3e7AeJlTs141ipwQ="; # armv7l
     };
   };
   src = srcs.${stdenv.hostPlatform.system};
