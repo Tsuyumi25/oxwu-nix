@@ -48,15 +48,23 @@ for ARCH in "${!URLS[@]}"; do
 
   HASH=$(nix hash file "$TMPFILE")
 
+  grep -q "# $ARCH" "$SCRIPT_DIR/package.nix" || { echo "ERROR: anchor '# $ARCH' not found in package.nix"; exit 1; }
+  OLD_HASH=$(sed -n "s|.*hash = \"\(sha256-[^\"]*\)\"; # $ARCH|\1|p" "$SCRIPT_DIR/package.nix")
+  echo "$NEW_ETAG" > "$ETAG_FILE"
+
+  if [ "$HASH" = "$OLD_HASH" ]; then
+    rm -f "$TMPFILE"; TMPFILE=""
+    echo "$ARCH: etag changed, content unchanged"
+    continue
+  fi
+
   if [ -z "$NEW_VERSION" ]; then
     NEW_VERSION=$(extract_version "$TMPFILE")
     [ -n "$NEW_VERSION" ] || { echo "ERROR: could not extract version from $ARCH AppImage"; exit 1; }
     echo "version: $NEW_VERSION"
   fi
 
-  grep -q "# $ARCH" "$SCRIPT_DIR/package.nix" || { echo "ERROR: anchor '# $ARCH' not found in package.nix"; exit 1; }
   sed -i "s|hash = \"sha256-[^\"]*\"; # $ARCH|hash = \"$HASH\"; # $ARCH|" "$SCRIPT_DIR/package.nix"
-  echo "$NEW_ETAG" > "$ETAG_FILE"
 
   rm -f "$TMPFILE"; TMPFILE=""
   CHANGED=true
